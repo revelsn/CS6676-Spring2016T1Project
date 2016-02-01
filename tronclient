@@ -1,0 +1,71 @@
+package com.gemalto.tron;
+
+import com.gemalto.tron.model.model.Action;
+import com.gemalto.tron.model.model.Board;
+import com.gemalto.tron.model.model.Coordinate;
+
+import java.util.Scanner;
+
+
+
+public final class Game {
+
+    private MyBot bot;
+
+
+    public Game() {
+        setBot(new MyBot());
+    }
+
+    public void doAction() {
+        // Create the console reader.
+        Scanner sc = new Scanner(System.in);
+
+        // Read the current turn.
+        String line = sc.nextLine();
+        do {
+            int turn = Integer.parseInt(line);
+
+            // Read the position of the player1.
+            line = sc.nextLine();
+            Coordinate player1 = Coordinate.loadCoordinate(line);
+
+            // Read the position of the player2.
+            line = sc.nextLine();
+            Coordinate player2 = Coordinate.loadCoordinate(line);
+
+            // Read the board of the game.
+            line = readTheRestOfTheInput(sc);
+            Board board = Board.loadBoard(line);
+
+            // Calculate the action.
+            Action action = bot.doAction(player1, player2, board, turn);
+
+            // Write the output.
+            System.out.println(turn);
+            System.out.println(action);
+            System.out.println("go");
+
+            // Read the next turn.
+            line = sc.nextLine();
+        } while (!endGame(line));
+    }
+
+    protected String readTheRestOfTheInput(Scanner sc) {
+        StringBuilder sb = new StringBuilder();
+        String line = sc.nextLine();
+        while (!line.equals("go")) {
+            sb.append(line + "\n");
+            line = sc.nextLine();
+        }
+        return sb.toString();
+    }
+
+    protected void setBot(MyBot bot) {
+        this.bot = bot;
+    }
+
+    private boolean endGame(String line) {
+        return line.equals("lose") || line.equals("win");
+    }
+}
